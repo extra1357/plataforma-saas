@@ -1,0 +1,26 @@
+import 'zone.js/node';
+import express from 'express';
+import { join } from 'path';
+import { existsSync } from 'fs';
+
+import bootstrap from './main.server'; // se server.ts estiver dentro de src/
+
+const server = express();
+const distFolder = join(process.cwd(), 'dist/front-end/browser');
+const indexHtml = existsSync(join(distFolder, 'index.html')) ? 'index.html' : 'index.original.html';
+
+server.get('*.*', express.static(distFolder, { maxAge: '1y' }));
+
+server.get('*', async (req, res, next) => {
+  try {
+    await bootstrap(); // inicializa Angular SSR
+    res.sendFile(join(distFolder, indexHtml));
+  } catch (err: any) {
+    next(err);
+  }
+});
+
+const port = process.env['PORT'] || 4000;
+server.listen(port, () => {
+  console.log(`Node server listening on http://localhost:${port}`);
+});

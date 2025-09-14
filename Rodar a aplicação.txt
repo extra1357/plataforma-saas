@@ -1,0 +1,32 @@
+⚙️ 1. Rodando o Back-end (Spring Boot)
+
+No terminal, dentro da pasta do back-end (/saas ou como você chamou):
+
+Se usa Maven:
+./mvnw spring-boot:run   # Linux/Mac
+mvnw.cmd spring-boot:run # Windows PowerShell ou CMD
+
+Se usa Gradle:
+./gradlew bootRun   # Linux/Mac
+gradlew.bat bootRun # Windows
+
+
+👉 Isso vai subir o servidor na porta 8080 (por padrão).
+Exemplo: http://localhost:8080/tenants
+
+🎨 2. Rodando o Front-end (Angular)
+
+No terminal, entre na pasta do front-end (/front-end ou como você chamou):
+
+Instalar dependências:
+
+npm install
+
+
+Rodar o servidor Angular:
+
+ng serve
+
+
+👉 O Angular sobe por padrão em http://localhost:4200
+.

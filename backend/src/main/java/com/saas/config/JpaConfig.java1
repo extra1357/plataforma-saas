@@ -1,0 +1,48 @@
+package com.saas.config;
+
+import org.hibernate.MultiTenancyStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+
+@Configuration
+public class JpaConfig {
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Autowired
+    private SchemaMultiTenantConnectionProvider multiTenantConnectionProvider;
+
+    @Autowired
+    private SchemaTenantIdentifierResolver tenantIdentifierResolver;
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(dataSource);
+        em.setPackagesToScan("com.saas.model");
+        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("hibernate.multiTenancy", MultiTenancyStrategy.SCHEMA);
+        properties.put("hibernate.multi_tenant_connection_provider", multiTenantConnectionProvider);
+        properties.put("hibernate.tenant_identifier_resolver", tenantIdentifierResolver);
+
+        em.setJpaPropertyMap(properties);
+        return em;
+    }
+
+    @Bean
+    public JpaTransactionManager transactionManager(EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
+    }
+}
